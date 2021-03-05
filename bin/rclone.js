@@ -10,7 +10,6 @@ if (commandName === "update") {
 }
 
 // Executes rclone command if available.
-/** @type {(...args: any[]) => ChildProcess } */
 const { [commandName]: command } = rclone;
 
 const subprocess = command ? command(...args) : rclone(commandName, ...args);
