@@ -1,0 +1,18 @@
+{
+  "name": "rclone",
+  "version": "0.1.0",
+  "description": "JavaScript API for rclone",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "rclone"
+  ],
+  "author": "Sơn Trần-Nguyễn",
+  "license": "MIT",
+  "dependencies": {
+    "adm-zip": "^0.5.3",
+    "node-fetch": "^2.6.1"
+  }
+}
