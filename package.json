@@ -1,5 +1,5 @@
 {
-  "name": "rclone",
+  "name": "rclone.js",
   "version": "0.4.0",
   "description": "JavaScript API for rclone",
   "main": "index.js",
