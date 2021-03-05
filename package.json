@@ -15,6 +15,7 @@
   ],
   "author": "Sơn Trần-Nguyễn",
   "license": "MIT",
+  "repository": "https://github.com/sntran/rclone.js.git",
   "dependencies": {
     "adm-zip": "^0.5.3",
     "node-fetch": "^2.6.1"
