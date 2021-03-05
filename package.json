@@ -1,12 +1,13 @@
 {
   "name": "rclone",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "JavaScript API for rclone",
   "main": "index.js",
   "bin": {
     "rclone": "./bin/rclone.js"
   },
   "scripts": {
+    "postinstall": "node bin/rclone.js update",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
