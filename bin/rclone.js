@@ -1,19 +1,19 @@
 #!/usr/bin/env node
 
-const api = require("../index.js");
+const rclone = require("../");
 
 const [/** node **/, /** file **/, commandName, ...args] = process.argv;
 
 // "update" command is not a rclone command.
 if (commandName === "update") {
-  return api.update(...args);
+  return rclone.update(...args);
 }
 
 // Executes rclone command if available.
 /** @type {(...args: any[]) => ChildProcess } */
-const { [commandName]: command } = api;
+const { [commandName]: command } = rclone;
 
-const subprocess = command ? command(...args) : api(commandName, ...args);
+const subprocess = command ? command(...args) : rclone(commandName, ...args);
 
 subprocess.stdout.on("data", (data) => {
   console.log(data.toString());
