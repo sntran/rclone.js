@@ -4,7 +4,7 @@ const rclone = require("../");
 
 const [/** node **/, /** file **/, commandName, ...args] = process.argv;
 
-// "update" command is not a rclone command.
+// "update" is not a rclone command.
 if (commandName === "update") {
   return rclone.update(...args);
 }
@@ -14,10 +14,10 @@ const { [commandName]: command } = rclone;
 
 const subprocess = command ? command(...args) : rclone(commandName, ...args);
 
-subprocess.stdout.on("data", (data) => {
+subprocess.stdout?.on("data", (data) => {
   console.log(data.toString());
 });
 
-subprocess.stderr.on("data", (data) => {
+subprocess.stderr?.on("data", (data) => {
   console.error(data.toString());
 });

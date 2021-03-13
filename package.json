@@ -1,6 +1,6 @@
 {
   "name": "rclone.js",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "JavaScript API for rclone",
   "main": "index.js",
   "bin": {

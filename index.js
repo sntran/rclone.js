@@ -77,11 +77,17 @@ api.update = async function() {
   });
 }
 
+// Rclone's `cat` needs to pipe directly to stdout.
+api.cat = function() {
+  return spawn(RCLONE, ["cat", ...arguments], {
+    stdio: "inherit",
+  });
+}
+
 const COMMANDS = [
   "about", // Get quota information from the remote.
   "authorize", // Remote authorization.
   "backend", // Run a backend specific command.
-  "cat", // Concatenates any files and sends them to stdout.
   "check", // Checks the files in the source and destination match.
   "cleanup", // Clean up the remote if possible.
   "config", // Enter an interactive configuration session.
