@@ -84,6 +84,9 @@ api.cat = function() {
   });
 }
 
+// Promise-based API.
+const promises = api.promises = {};
+
 const COMMANDS = [
   "about", // Get quota information from the remote.
   "authorize", // Remote authorization.
@@ -154,8 +157,29 @@ const COMMANDS = [
 ];
 
 COMMANDS.forEach(commandName => {
+  // Normal API command to return a subprocess.
   api[commandName] = function() {
     return api(commandName, ...arguments);
+  }
+
+  // Promise API command to return a Promise.
+  promises[commandName] = function() {
+    const args = Array.from(arguments);
+
+    return new Promise((resolve, reject) => {
+      const { stdout, stderr } = api(commandName, ...args);
+
+      let output = "";
+      stdout.on("data", data => {
+        output += data;
+      });
+      stdout.on("end", () => {
+        resolve(output.trim());
+      });
+      stderr.on("data", (data) => {
+        reject(data.toString());
+      });
+    });
   }
 });
 

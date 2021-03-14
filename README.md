@@ -36,6 +36,17 @@ ls.stderr.on("data", (data) => {
 });
 ```
 
+There is also a Promise-based API:
+
+```js
+const rclone = require("rclone.js").promises;
+
+(async function() {
+  const results = await rclone.ls("source:");
+  console.log(results);
+})();
+```
+
 ### CLI
 
 This simple CLI calls the JS API above and outputs `stdout` and `stderr`.
