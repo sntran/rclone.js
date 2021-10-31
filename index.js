@@ -115,9 +115,9 @@ const COMMANDS = [
   "delete", // Remove the contents of path.
   "deletefile", // Remove a single file from remote.
   "genautocomplete", // Output completion script for a given shell.
-  "genautocomplete", // bash	Output bash completion script for rclone.
-  "genautocomplete", // fish	Output fish completion script for rclone.
-  "genautocomplete", // zsh	Output zsh completion script for rclone.
+  "genautocomplete bash", // Output bash completion script for rclone.
+  "genautocomplete fish", // Output fish completion script for rclone.
+  "genautocomplete zsh", // Output zsh completion script for rclone.
   "gendocs", // Output markdown docs for rclone to the directory supplied.
   "hashsum", // Produces a hashsum file for all the objects in the path.
   "link", // Generate public link to file/folder.
@@ -141,12 +141,12 @@ const COMMANDS = [
   "rmdir", // Remove the path if empty.
   "rmdirs", // Remove empty directories under the path.
   "serve", // Serve a remote over a protocol.
-  "serve", // dlna	Serve remote:path over DLNA
-  "serve", // ftp	Serve remote:path over FTP.
-  "serve", // http	Serve the remote over HTTP.
-  "serve", // restic	Serve the remote for restic's REST API.
-  "serve", // sftp	Serve the remote over SFTP.
-  "serve", // webdav	Serve remote:path over webdav.
+  "serve dlna", // Serve remote:path over DLNA
+  "serve ftp", // Serve remote:path over FTP.
+  "serve http", // Serve the remote over HTTP.
+  "serve restic", // Serve the remote for restic's REST API.
+  "serve sftp", // Serve the remote over SFTP.
+  "serve webdav", // Serve remote:path over webdav.
   "settier", // Changes storage class/tier of objects in remote.
   "sha1sum", // Produces an sha1sum file for all the objects in the path.
   "size", // Prints the total size and number of objects in remote:path.
