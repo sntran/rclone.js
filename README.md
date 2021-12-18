@@ -15,6 +15,9 @@ npm install rclone.js
 After installation, the latest binary of `rclone` is also fetched based on
 your system environment.
 
+If a custom version of `rclone` binary is needed, use `RCLONE_EXECUTABLE`
+environment variable to set the path to that custom binary.
+
 ## Usage
 
 ### Node.js

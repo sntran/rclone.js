@@ -34,14 +34,17 @@ switch (arch) {
 }
 
 const RCLONE_DIR = join(__dirname, "bin");
-const RCLONE = join(RCLONE_DIR, `rclone${ platform === "windows"? ".exe" : "" }`);
+const DEFAULT_RCLONE_EXECUTABLE = join(RCLONE_DIR, `rclone${ platform === "windows"? ".exe" : "" }`);
+const {
+  RCLONE_EXECUTABLE = DEFAULT_RCLONE_EXECUTABLE,
+} = process.env;
 
 /**
  * Spawns a rclone process to execute with the supplied arguments.
  * @returns {ChildProcess} - the rclone subprocess.
  */
 const api = function() {
-  return spawn(RCLONE, Array.from(arguments));
+  return spawn(RCLONE_EXECUTABLE, Array.from(arguments));
 }
 
 /**
@@ -69,7 +72,7 @@ api.update = async function() {
       if (/rclone(\.exe)?$/.test(entry.name)) {
         zip.extractEntryTo(entry, RCLONE_DIR, false, true);
         // Make it executable.
-        chmodSync(RCLONE, 0o755);
+        chmodSync(DEFAULT_RCLONE_EXECUTABLE, 0o755);
 
         console.log(`${ entry.entryName } is installed.`);
       }
@@ -79,7 +82,7 @@ api.update = async function() {
 
 // Rclone's `cat` needs to pipe directly to stdout.
 api.cat = function() {
-  return spawn(RCLONE, ["cat", ...arguments], {
+  return spawn(RCLONE_EXECUTABLE, ["cat", ...arguments], {
     stdio: "inherit",
   });
 }
