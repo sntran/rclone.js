@@ -52,30 +52,30 @@ const api = function() {
  * @returns {Promise}
  */
 api.update = async function() {
+  const https = require("https");
   const { chmodSync } = require("fs");
 
-  const fetch = require("node-fetch");
   const AdmZip = require("adm-zip");
 
   console.log("Downloading latest rclone...");
 
-  return fetch(`https://downloads.rclone.org/rclone-current-${ platform }-${ arch }.zip`)
-  .then(response => response.buffer())
-  .then(buffer => {
-    console.log("Extracting rclone...");
+  https.get(`https://downloads.rclone.org/rclone-current-${ platform }-${ arch }.zip`, (response) => {
+    const chunks = [];
+    response.on("data", (chunk) => chunks.push(chunk));
+    response.on("end", () => {
+      console.log("Extracting rclone...");
 
-    const zip = new AdmZip(buffer);
+      const zip = new AdmZip(Buffer.concat(chunks));
+      zip.getEntries().forEach((entry) => {
+        const { name, entryName } = entry;
+        if (/rclone(\.exe)?$/.test(name)) {
+          zip.extractEntryTo(entry, RCLONE_DIR, false, true);
+          // Make it executable.
+          chmodSync(DEFAULT_RCLONE_EXECUTABLE, 0o755);
 
-    var zipEntries = zip.getEntries();
-
-    zipEntries.forEach((entry) => {
-      if (/rclone(\.exe)?$/.test(entry.name)) {
-        zip.extractEntryTo(entry, RCLONE_DIR, false, true);
-        // Make it executable.
-        chmodSync(DEFAULT_RCLONE_EXECUTABLE, 0o755);
-
-        console.log(`${ entry.entryName } is installed.`);
-      }
+          console.log(`${ entryName.replace(`/${ name }`, "") } is installed.`);
+        }
+      });
     });
   });
 }
