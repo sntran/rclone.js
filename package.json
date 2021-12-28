@@ -2,22 +2,50 @@
   "name": "rclone.js",
   "version": "0.5.1",
   "description": "JavaScript API for rclone",
-  "main": "index.js",
+  "keywords": [
+    "rclone"
+  ],
+  "homepage": "https://rclone.js.org/",
+  "bugs": {
+    "url": "https://github.com/sntran/rclone.js/issues",
+    "email": "rclone.js@sntran.com"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Sơn Trần-Nguyễn",
+    "email": "rclone.js@sntran.com",
+    "url": "https://sntran.com"
+  },
+  "main": "rclone.js",
   "bin": {
     "rclone": "./bin/rclone.js"
   },
+  "repository": "github:sntran/rclone.js",
   "scripts": {
     "postinstall": "node bin/rclone.js update",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "rclone"
-  ],
-  "author": "Sơn Trần-Nguyễn",
-  "license": "MIT",
-  "repository": "https://github.com/sntran/rclone.js.git",
   "dependencies": {
     "adm-zip": "^0.5.3",
     "node-fetch": "^2.6.1"
-  }
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "os": [
+    "darwin",
+    "freebsd",
+    "linux",
+    "openbsd",
+    "sunos",
+    "win32"
+  ],
+  "cpu": [
+    "arm",
+    "arm64",
+    "mips",
+    "mipsel",
+    "x32",
+    "x64"
+  ]
 }
