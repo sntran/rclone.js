@@ -1,5 +1,7 @@
+const { existsSync } = require("fs");
 const { join } = require("path");
 const { spawn, ChildProcess } = require("child_process");
+const https = require("https");
 
 let { platform, arch } = process;
 
@@ -71,21 +73,36 @@ const api = function(...args) {
  * Updates rclone binary based on current OS.
  * @returns {Promise}
  */
-api.update = async function() {
-  const https = require("https");
-  const { chmodSync } = require("fs");
+api.selfupdate = function(options = {}) {
+  const {
+    beta = false,
+    stable = !beta,
+    version,
+    check = false,
+  } = options;
 
-  const AdmZip = require("adm-zip");
+  // Passes along to `rclone` if exists.
+  if (existsSync(RCLONE_EXECUTABLE)) {
+    return api("selfupdate", options);
+  }
 
-  console.log("Downloading latest rclone...");
+  const baseUrl = stable ? "https://downloads.rclone.org" : "https://beta.rclone.org";
+  const channel = stable ? "current" : "beta-latest";
 
-  https.get(`https://downloads.rclone.org/rclone-current-${ platform }-${ arch }.zip`, (response) => {
-    const chunks = [];
-    response.on("data", (chunk) => chunks.push(chunk));
-    response.on("end", () => {
+  if (check) {
+    return get(`${ baseUrl }/version.txt`).then(version => {
+      console.log(`The latest version is ${ version }`);
+    });
+  }
+
+  console.log("Downloading rclone...");
+  const archiveName = version ? `${ version }/rclone-${ version }` : `rclone-${ channel }`;
+  return get(`${ baseUrl }/${ archiveName }-${ platform }-${ arch }.zip`).then(archive => {
       console.log("Extracting rclone...");
+    const AdmZip = require("adm-zip");
+    const { chmodSync } = require("fs");
 
-      const zip = new AdmZip(Buffer.concat(chunks));
+    const zip = new AdmZip(archive);
       zip.getEntries().forEach((entry) => {
         const { name, entryName } = entry;
         if (/rclone(\.exe)?$/.test(name)) {
@@ -95,7 +112,6 @@ api.update = async function() {
 
           console.log(`${ entryName.replace(`/${ name }`, "") } is installed.`);
         }
-      });
     });
   });
 }
@@ -230,3 +246,15 @@ COMMANDS.forEach(commandName => {
 });
 
 module.exports = api;
+
+async function get(url) {
+  return new Promise((resolve, reject) => {
+    https.get(url, (response) => {
+      const chunks = [];
+      response.on("data", (chunk) => chunks.push(chunk));
+      response.on("end", () => {
+        resolve(Buffer.concat(chunks));
+      });
+    });
+  });
+}

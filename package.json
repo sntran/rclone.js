@@ -1,6 +1,6 @@
 {
   "name": "rclone.js",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "description": "JavaScript API for rclone",
   "keywords": [
     "rclone"
@@ -22,7 +22,7 @@
   },
   "repository": "github:sntran/rclone.js",
   "scripts": {
-    "postinstall": "node bin/rclone.js update",
+    "postinstall": "node bin/rclone.js selfupdate",
     "test": "node test test/*-test.js"
   },
   "dependencies": {
