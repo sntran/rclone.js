@@ -57,6 +57,26 @@ const rclone = require("rclone.js").promises;
 })();
 ```
 
+When the official `rclone` adds new command that has not been provided here,
+we can still use the command through the default exported functions, passing
+the command name as first argument:
+
+```js
+const rclone = require("rclone.js");
+
+rclone("newcommand", "source:", "target:", {
+  "flag": true,
+});
+
+(async function() {
+  const results = await rclone.promises("newcommand", "source:", "target:", {
+    "flag": true,
+  });
+
+  console.log(results);
+})();
+```
+
 ### CLI
 
 This simple CLI calls the JS API above and outputs `stdout` and `stderr`.

@@ -105,7 +105,29 @@ api.cat = function() {
 }
 
 // Promise-based API.
-const promises = api.promises = {};
+const promises = api.promises = function(...args) {
+  return new Promise((resolve, reject) => {
+    const subprocess = api(...args);
+
+    subprocess.on("error", (error) => {
+      reject(error);
+    });
+
+    const stdout = [], stderr = [];
+    subprocess.stdout.on("data", (chunk) => {
+      stdout.push(chunk);
+    });
+    subprocess.stdout.on("end", () => {
+      resolve(Buffer.concat(stdout));
+    });
+    subprocess.stderr.on("data", (chunk) => {
+      stderr.push(chunk);
+    });
+    subprocess.stderr.on("end", () => {
+      reject(Buffer.concat(stderr));
+    });
+  });
+};
 
 const COMMANDS = [
   "about", // Get quota information from the remote.
@@ -178,29 +200,28 @@ const COMMANDS = [
 
 COMMANDS.forEach(commandName => {
   // Normal API command to return a subprocess.
-  api[commandName] = function() {
-    return api(commandName, ...arguments);
-  }
+  Object.defineProperty(api, commandName, {
+    /**
+     * @param  {...string|object} args arguments for the API call
+     * @returns {ChildProcess} the rclone subprocess.
+     */
+    value: function(...args) {
+      return api(commandName, ...args);
+    },
+    enumerable: true,
+  });
 
   // Promise API command to return a Promise.
-  promises[commandName] = function() {
-    const args = Array.from(arguments);
-
-    return new Promise((resolve, reject) => {
-      const { stdout, stderr } = api(commandName, ...args);
-
-      let output = "";
-      stdout.on("data", data => {
-        output += data;
+  Object.defineProperty(promises, commandName, {
+    /**
+     * @param  {...string|object} args arguments for the API call
+     * @returns {Promise<string>} the output of the command.
+     */
+    value: function(...args) {
+      return promises(commandName, ...args);
+    },
+    enumerable: true,
       });
-      stdout.on("end", () => {
-        resolve(output.trim());
-      });
-      stderr.on("data", (data) => {
-        reject(data.toString());
-      });
-    });
-  }
 });
 
 module.exports = api;
