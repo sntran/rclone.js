@@ -23,12 +23,16 @@ environment variable to set the path to that custom binary.
 ### Node.js
 
 Except `update` (which is used to update `rclone` binary), all API functions
-return a child process whose events we can listen to.
+return a child process whose events we can listen to. Optional flags can be
+passed as an object to the last argument of the function call. Except removing
+the `--` prefix, there is no other conversion to the flag name.
 
 ```js
 const rclone = require("rclone.js");
 
-const ls = rclone.ls("source:");
+const ls = rclone.ls("source:", {
+  "max-depth": 1,
+});
 
 ls.stdout.on("data", (data) => {
   console.log(data.toString());
@@ -45,7 +49,10 @@ There is also a Promise-based API:
 const rclone = require("rclone.js").promises;
 
 (async function() {
-  const results = await rclone.ls("source:");
+  const results = await rclone.ls("source:", {
+    "max-depth": 1,
+  });
+
   console.log(results);
 })();
 ```
@@ -62,7 +69,7 @@ rclone v1.54.0
 ```
 
 ```sh
-$ npx rclone ls source:
+$ npx rclone ls source: --max-depth 1
           -1 2020-12-12 10:01:44        -1 Documents
           -1 2020-12-11 16:24:20        -1 Pictures
 ```

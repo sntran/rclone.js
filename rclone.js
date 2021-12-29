@@ -41,10 +41,27 @@ const {
 
 /**
  * Spawns a rclone process to execute with the supplied arguments.
- * @returns {ChildProcess} - the rclone subprocess.
+ *
+ * The last argument can also be an object with all the flags.
+ *
+ * @param {...string|object} args arguments for the API call.
+ * @returns {ChildProcess} the rclone subprocess.
  */
-const api = function() {
-  return spawn(RCLONE_EXECUTABLE, Array.from(arguments));
+const api = function(...args) {
+  const flags = args.pop();
+  if (!!flags && flags.constructor === Object) {
+    Object.entries(flags).forEach(([key, value]) => {
+      args.push(`--${ key }`);
+      if (value !== true) {
+        args.push(`${ value }`);
+      }
+    });
+  } else {
+    // Not a flag object, push it back.
+    args.push(flags);
+  }
+
+  return spawn(RCLONE_EXECUTABLE, args);
 }
 
 /**
