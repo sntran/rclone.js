@@ -51,8 +51,11 @@ const api = function(...args) {
   const flags = args.pop();
   if (!!flags && flags.constructor === Object) {
     Object.entries(flags).forEach(([key, value]) => {
+      if (value === false) {
+        key = `no-${ key }`;
+      }
       args.push(`--${ key }`);
-      if (value !== true) {
+      if (typeof value !== "boolean") {
         args.push(`${ value }`);
       }
     });
@@ -124,7 +127,9 @@ const promises = api.promises = function(...args) {
       stderr.push(chunk);
     });
     subprocess.stderr.on("end", () => {
+      if (stderr.length) {
       reject(Buffer.concat(stderr));
+      }
     });
   });
 };
