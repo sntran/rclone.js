@@ -69,6 +69,33 @@ const api = function(...args) {
   return spawn(RCLONE_EXECUTABLE, args);
 }
 
+// Promise-based API.
+const promises = api.promises = function(...args) {
+  return new Promise((resolve, reject) => {
+    const subprocess = api(...args);
+
+    subprocess.on("error", (error) => {
+      reject(error);
+    });
+
+    const stdout = [], stderr = [];
+    subprocess.stdout.on("data", (chunk) => {
+      stdout.push(chunk);
+    });
+    subprocess.stdout.on("end", () => {
+      resolve(Buffer.concat(stdout));
+    });
+    subprocess.stderr.on("data", (chunk) => {
+      stderr.push(chunk);
+    });
+    subprocess.stderr.on("end", () => {
+      if (stderr.length) {
+        reject(Buffer.concat(stderr));
+      }
+    });
+  });
+};
+
 /**
  * Updates rclone binary based on current OS.
  * @returns {Promise}
@@ -98,62 +125,29 @@ api.selfupdate = function(options = {}) {
   console.log("Downloading rclone...");
   const archiveName = version ? `${ version }/rclone-${ version }` : `rclone-${ channel }`;
   return get(`${ baseUrl }/${ archiveName }-${ platform }-${ arch }.zip`).then(archive => {
-      console.log("Extracting rclone...");
+    console.log("Extracting rclone...");
     const AdmZip = require("adm-zip");
     const { chmodSync } = require("fs");
 
     const zip = new AdmZip(archive);
-      zip.getEntries().forEach((entry) => {
-        const { name, entryName } = entry;
-        if (/rclone(\.exe)?$/.test(name)) {
-          zip.extractEntryTo(entry, RCLONE_DIR, false, true);
-          // Make it executable.
-          chmodSync(DEFAULT_RCLONE_EXECUTABLE, 0o755);
+    zip.getEntries().forEach((entry) => {
+      const { name, entryName } = entry;
+      if (/rclone(\.exe)?$/.test(name)) {
+        zip.extractEntryTo(entry, RCLONE_DIR, false, true);
+        // Make it executable.
+        chmodSync(DEFAULT_RCLONE_EXECUTABLE, 0o755);
 
-          console.log(`${ entryName.replace(`/${ name }`, "") } is installed.`);
-        }
-    });
-  });
-}
-
-// Rclone's `cat` needs to pipe directly to stdout.
-api.cat = function() {
-  return spawn(RCLONE_EXECUTABLE, ["cat", ...arguments], {
-    stdio: "inherit",
-  });
-}
-
-// Promise-based API.
-const promises = api.promises = function(...args) {
-  return new Promise((resolve, reject) => {
-    const subprocess = api(...args);
-
-    subprocess.on("error", (error) => {
-      reject(error);
-    });
-
-    const stdout = [], stderr = [];
-    subprocess.stdout.on("data", (chunk) => {
-      stdout.push(chunk);
-    });
-    subprocess.stdout.on("end", () => {
-      resolve(Buffer.concat(stdout));
-    });
-    subprocess.stderr.on("data", (chunk) => {
-      stderr.push(chunk);
-    });
-    subprocess.stderr.on("end", () => {
-      if (stderr.length) {
-      reject(Buffer.concat(stderr));
+        console.log(`${ entryName.replace(`/${ name }`, "") } is installed.`);
       }
     });
   });
-};
+}
 
 const COMMANDS = [
   "about", // Get quota information from the remote.
   "authorize", // Remote authorization.
   "backend", // Run a backend specific command.
+  "cat",
   "check", // Checks the files in the source and destination match.
   "cleanup", // Clean up the remote if possible.
   "config", // Enter an interactive configuration session.
@@ -242,7 +236,7 @@ COMMANDS.forEach(commandName => {
       return promises(commandName, ...args);
     },
     enumerable: true,
-      });
+  });
 });
 
 module.exports = api;

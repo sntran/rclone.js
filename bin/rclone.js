@@ -19,9 +19,9 @@ const subprocess = command ?
       rclone(...args, flags);
 
 subprocess.stdout?.on("data", (data) => {
-  console.log(data.toString());
+  process.stdout.write(data);
 });
 
 subprocess.stderr?.on("data", (data) => {
-  console.error(data.toString());
+  process.stderr.write(data);
 });
