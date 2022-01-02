@@ -93,3 +93,47 @@ $ npx rclone ls source: --max-depth 1
           -1 2020-12-12 10:01:44        -1 Documents
           -1 2020-12-11 16:24:20        -1 Pictures
 ```
+
+### Custom command
+
+The CLI also supports executing a custom JS-based command to further extend
+usage outside of what the official `rclone` offers:
+
+```sh
+$ npx rclone echo.js arg1 --string value arg2 --boolean
+```
+
+The custom JS file just needs to export a function that takes the arguments and
+flags parsed from the CLI. It can either return a child process, or a `Promise`.
+For a child process, its `stdout` and `stderr` are piped to the caller process.
+
+Inside the function, `this` is set to `rclone.js` module.
+
+```js
+const { spawn } = require("child_process");
+
+module.exports = function echo(arg1, arg2, flags = {}) {
+  return spawn("echo", [arg1, arg2, JSON.stringify(flags)]);
+}
+```
+
+The custom module is loaded through `require`, so it has some nice advantages
+when [locating module](https://nodejs.org/api/modules.html#all-together):
+
+- Does not need to specify `.js` extension, `custom` is same as `custom.js`.
+- Considers both `foobar.js` and `foobar/index.js`.
+- Can be extended through `NODE_PATH` environment variable.
+- Can also use module from `node_modules` by its name.
+
+With that, there are a few things custom commands can be used:
+
+- Wraps existing API to add new functionality, such as `archive`.
+- Defines a module with the same name as existing API to extend it with new
+  flags and/or backends.
+
+For a "real-life" example, check out [selfupdate](rclone/selfupdate.js), which
+overrides the built-in `selfupdate` command to download rclone executable if it
+has not been downloaded yet. Consecutive runs just call `selfupdate` API.
+
+For publishing a custom `rclone` command as NPM package, consider prefixing the
+package name with `rclone-` so it's clearer and not conflicting.

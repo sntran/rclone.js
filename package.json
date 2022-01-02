@@ -1,6 +1,6 @@
 {
   "name": "rclone.js",
-  "version": "0.5.5",
+  "version": "0.6.0",
   "description": "JavaScript API for rclone",
   "keywords": [
     "rclone"
@@ -16,6 +16,11 @@
     "email": "rclone.js@sntran.com",
     "url": "https://sntran.com"
   },
+  "files": [
+    "bin/rclone.js",
+    "rclone/",
+    "rclone.js"
+  ],
   "main": "rclone.js",
   "bin": {
     "rclone": "./bin/rclone.js"
