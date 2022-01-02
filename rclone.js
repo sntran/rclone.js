@@ -21,6 +21,11 @@ const api = function(...args) {
   const flags = args.pop();
   if (!!flags && flags.constructor === Object) {
     Object.entries(flags).forEach(([key, value]) => {
+      // No need to handle key when value is null or undefined.
+      if (value == null) {
+        return;
+      }
+
       if (value === false) {
         key = `no-${ key }`;
       }
