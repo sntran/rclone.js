@@ -9,18 +9,45 @@ const {
   RCLONE_EXECUTABLE = DEFAULT_RCLONE_EXECUTABLE,
 } = process.env;
 
+const CHILD_OPTIONS = [
+  "cwd",
+  "env",
+  "argv0",
+  "stdio",
+  "detached",
+  "uid",
+  "gid",
+  "serialization",
+  "shell",
+  "windowsVerbatimArguments",
+  "windowsHide",
+  "signal",
+  "timeout",
+  "killSignal",
+];
+
 /**
  * Spawns a rclone process to execute with the supplied arguments.
  *
  * The last argument can also be an object with all the flags.
  *
+ * Options for the child process can also be passed into this last argument,
+ * and they will be picked out.
+ *
  * @param {...string|object} args arguments for the API call.
  * @returns {ChildProcess} the rclone subprocess.
  */
 const api = function(...args) {
-  const flags = args.pop();
+  let flags = args.pop();
+  let childOptions = {};
+
   if (!!flags && flags.constructor === Object) {
     Object.entries(flags).forEach(([key, value]) => {
+      if (CHILD_OPTIONS.indexOf(key) > -1) {
+        childOptions[key] = value;
+        return;
+      }
+
       // No need to handle key when value is null or undefined.
       if (value == null) {
         return;
@@ -39,7 +66,7 @@ const api = function(...args) {
     args.push(flags);
   }
 
-  return spawn(RCLONE_EXECUTABLE, args);
+  return spawn(RCLONE_EXECUTABLE, args, childOptions);
 }
 
 // Promise-based API.

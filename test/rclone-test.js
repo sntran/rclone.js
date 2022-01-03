@@ -1,9 +1,10 @@
 const childProcess = require("child_process");
 const {EventEmitter, Writable, Readable} = require("stream");
 
-childProcess.spawn = function(spawnfile, spawnargs) {
+childProcess.spawn = function(spawnfile, spawnargs, spwanoptions) {
   mockChildProcess.spawnfile = spawnfile;
   mockChildProcess.spawnargs = spawnargs;
+  mockChildProcess.spwanoptions = spwanoptions;
   return mockChildProcess;
 }
 
@@ -76,6 +77,35 @@ test("should prefix `no-` to false flag", () => {
   const spawnargs = [command, ...args, `--no-boolean`];
   const subprocess = rclone(command, ...args, flags);
   assert.deepEqual(subprocess.spawnargs, spawnargs);
+});
+
+test("should take options for child process", () => {
+  const command = "command";
+  const args = ["arg1", "arg2"];
+  const spwanoptions = {
+    "cwd": ".",
+    "env": process.env,
+    "argv0": command,
+    "stdio": {},
+    "detached": false,
+    "uid": undefined,
+    "gid": undefined,
+    "serialization": "json",
+    "shell": false,
+    "windowsVerbatimArguments": false,
+    "windowsHide": false,
+    "signal": undefined,
+    "timeout": undefined,
+    "killSignal": "SIGTERM",
+  };
+  const flags = {
+    boolean: false,
+    ...spwanoptions,
+  }
+  const spawnargs = [command, ...args, `--no-boolean`];
+  const subprocess = rclone(command, ...args, flags);
+  assert.deepEqual(subprocess.spawnargs, spawnargs);
+  assert.deepEqual(subprocess.spwanoptions, spwanoptions);
 });
 
 test("should also be able to return promise", async () => {
