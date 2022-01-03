@@ -100,8 +100,9 @@ const COMMANDS = [
   "about", // Get quota information from the remote.
   "authorize", // Remote authorization.
   "backend", // Run a backend specific command.
-  "cat",
+  "cat", // Concatenates any files and sends them to stdout.
   "check", // Checks the files in the source and destination match.
+  "checksum", // Checks the files in the source against a SUM file.
   "cleanup", // Clean up the remote if possible.
   "config", // Enter an interactive configuration session.
   "config create", // Create a new remote with name, type and options.
@@ -130,6 +131,7 @@ const COMMANDS = [
   "genautocomplete zsh", // Output zsh completion script for rclone.
   "gendocs", // Output markdown docs for rclone to the directory supplied.
   "hashsum", // Produces a hashsum file for all the objects in the path.
+  "help", // Show help for rclone commands, flags and backends.
   "link", // Generate public link to file/folder.
   "listremotes", // List all the remotes in the config file.
   "ls", // List the objects in the path with size and path.
@@ -162,6 +164,7 @@ const COMMANDS = [
   "sha1sum", // Produces an sha1sum file for all the objects in the path.
   "size", // Prints the total size and number of objects in remote:path.
   "sync", // Make source and dest identical, modifying destination only.
+  "test", // Run a test command.
   "touch", // Create new file or change file modification time.
   "tree", // List the contents of the remote in a tree like fashion.
   "version", // Show the version number.
