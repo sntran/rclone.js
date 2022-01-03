@@ -137,3 +137,8 @@ has not been downloaded yet. Consecutive runs just call `selfupdate` API.
 
 For publishing a custom `rclone` command as NPM package, consider prefixing the
 package name with `rclone-` so it's clearer and not conflicting.
+
+### Example Custom Commands
+
+- [rclone-archive](https://www.npmjs.com/package/rclone-archive):
+  Tracking https://github.com/rclone/rclone/issues/2815.
