@@ -56,10 +56,13 @@ const api = function(...args) {
       if (value === false) {
         key = `no-${ key }`;
       }
-      args.push(`--${ key }`);
-      if (typeof value !== "boolean") {
-        args.push(`${ value }`);
-      }
+      const values = Array.isArray(value)? value : [value];
+      values.forEach(value => {
+        args.push(`--${ key }`);
+        if (typeof value !== "boolean") {
+          args.push(`${ value }`);
+        }
+      });
     });
   } else {
     // Not a flag object, push it back.
