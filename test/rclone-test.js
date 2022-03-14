@@ -79,6 +79,21 @@ test("should prefix `no-` to false flag", () => {
   assert.deepEqual(subprocess.spawnargs, spawnargs);
 });
 
+test("should stringify JSON flag", () => {
+  const command = "command";
+  const args = ["arg1", "arg2"];
+  const flags = {
+    json: {
+      "p1": [1,"2",null,4],
+      "p2": { "a":1, "b":2 },
+      "_async": true,
+    },
+  }
+  const spawnargs = [command, ...args, "--json", JSON.stringify(flags.json)];
+  const subprocess = rclone(command, ...args, flags);
+  assert.deepEqual(subprocess.spawnargs, spawnargs);
+});
+
 test("should take options for child process", () => {
   const command = "command";
   const args = ["arg1", "arg2"];

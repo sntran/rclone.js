@@ -59,8 +59,11 @@ const api = function(...args) {
       const values = Array.isArray(value)? value : [value];
       values.forEach(value => {
         args.push(`--${ key }`);
-        if (typeof value !== "boolean") {
+        if (typeof value === "boolean") return;
+        if (typeof value === "string") {
           args.push(`${ value }`);
+        } else {
+          args.push(`${ JSON.stringify(value) }`);
         }
       });
     });
