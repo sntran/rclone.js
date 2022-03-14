@@ -22,16 +22,26 @@ environment variable to set the path to that custom binary.
 
 ### Node.js
 
-Except `update` (which is used to update `rclone` binary), all API functions
+Except `selfupdate`, which is used to update `rclone` binary, all API functions
 return a child process whose events we can listen to. Optional flags can be
 passed as an object to the last argument of the function call. Except removing
-the `--` prefix, there is no other conversion to the flag name.
+the `--` prefix, there is no other conversion to the flag name. JSON values are
+stringified before passed to `rclone`.
+
+Each API functions can also take options for the spawned child process. See
+https://nodejs.org/api/child_process.html#child_processspawncommand-args-options
+for their documentation.
 
 ```js
 const rclone = require("rclone.js");
 
 const ls = rclone.ls("source:", {
   "max-depth": 1,
+  // Spawn options:
+  "env": {
+    RCLONE_CONFIG: "~/.config/rclone/rclone.conf",
+  },
+  "shell": "/bin/sh",
 });
 
 ls.stdout.on("data", (data) => {
@@ -51,6 +61,11 @@ const rclone = require("rclone.js").promises;
 (async function() {
   const results = await rclone.ls("source:", {
     "max-depth": 1,
+    // Spawn options:
+    "env": {
+      RCLONE_CONFIG: "~/.config/rclone/rclone.conf",
+    },
+    "shell": "/bin/sh",
   });
 
   console.log(results);
