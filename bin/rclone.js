@@ -33,8 +33,7 @@ const subprocess = command ?
       rclone(...args, flags);
 
 try {
-  if(require.main === module) // If from CLI
-    process.stdin.pipe(subprocess.stdin); 
+  process.stdin.pipe(subprocess.stdin); 
 } catch (error) {
 }
 
