@@ -33,8 +33,9 @@ const subprocess = command ?
       rclone(...args, flags);
 
 try {
-  process.stdin.pipe(subprocess.stdin); 
+  process.stdin.pipe(subprocess.stdin);
 } catch (error) {
+  console.error(error);
 }
 
 subprocess.stdout?.on("data", (data) => {
